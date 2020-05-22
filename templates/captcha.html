@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<meta charset="UTF-8">
+
+
+<title>CutShort Captcha</title>
+    <style>
+    body, html{
+    background-color:#34515E;
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 18px;
+
+    }
+
+    .register-form{
+    font-size: 16px;
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    -webkit-transform: translate3d(-50%, -50%, 0);
+    -moz-transform: translate3d(-50%, -50%, 0);
+    transform: translate3d(-50%, -50%, 0);
+    }
+
+    .regbutton{
+    height: 50px;
+    width: 92px;
+    background-color:tomato;
+    border-radius: 0px;
+    font-size: 18px;
+    color:white;
+    border: none !important;
+    margin-bottom: 5px;
+    }
+    .regbutton:hover{
+    color: white;
+    background-color:#aa422f;
+    }
+    .regbutton:active{
+    color: white;
+    background-color:#aa422f;
+    }
+    .logbutton{
+    height: 50px;
+    width: 92px;
+    background-color:yellowgreen;
+    border-radius: 0px;
+    font-size: 18px;
+    color:white;
+    border: none !important;
+    margin-bottom: 5px;
+    }
+    .logbutton:hover{
+    color: white;
+    background-color:darkolivegreen;
+    }
+    .logbutton:active{
+    color: white;
+    background-color:darkolivegreen;
+    }
+
+    .playbutton{
+    height: 50px;
+    width: 92px;
+    background-color:yellowgreen;
+    border-radius: 0px;
+    font-size: 18px;
+    color:white;
+    border: none !important;
+    margin-bottom: 5px;
+    }
+    .playbutton:hover{
+    color: white;
+    background-color:darkolivegreen;
+    }
+    .playbutton:active{
+    color: white;
+    background-color:darkolivegreen;
+    }
+
+    .register-form label{
+    color: aliceblue;
+
+    }
+    .register-form input{
+    margin-bottom: 5px;
+    width: 430px;
+    height: 40px;
+    border-radius: 0px;
+    }
+    .space{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+	 <form action="" method="" class="register-form">
+         <div class="row">
+           <div class="col-md-4 col-sm-4 col-lg-4">
+              <label>CAPTCHA</label>
+                <img src="/{{image}}" alt="Italian Trulli" width="430" height="50">
+           </div>
+      </div>
+
+      <div class="row">
+           <div class="col-md-4 col-sm-4 col-lg-4">
+              <label>INPUT</label>
+               <input name="" class="form-control captcha_input" type="text">
+           </div>
+      </div>
+
+         <div class="space"></div>
+
+      <div class="row">
+           <div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
+           <button class="btn btn-default logbutton" type="button">Submit</button>
+
+          </div>
+          <div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
+           <button class="btn btn-default playbutton" audio_attr="/{{audio}}">Play audio</button>
+          </div>
+          <div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
+           <button class="btn btn-default regbutton" >Try Next</button>
+          </div>
+      </div>
+    </form>
+</div>
+</body>
+<script type="text/javascript">
+$( document ).ready(function() {
+    $(".regbutton").on('click'){
+            window.location.reload();
+    };
+});
+</script>
+<script type="text/javascript">
+$( document ).ready(function() {
+        $('.playbutton').click(function(e) {
+            e.preventDefault();
+            const audio = new Audio("/{{audio}}");
+            audio.play();
+        });
+});
+</script>
+<script type="text/javascript">
+$( document ).ready(function() {
+    $(".logbutton").click(function(e) {
+    var value = $('.captcha_input').val()
+    if (value != ""){
+    $.ajax({
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            method: 'POST',
+            url: "/",
+            data: {'captcha':value},
+            success:function (data){
+                response = JSON.parse(data)
+                if (response.status == '200'){
+                        $('.captcha_input').val("")
+                        alert(response.msg)
+                        window.location.reload();
+
+                        }else{
+                        alert(response.msg)
+                        }
+            }
+
+    })
+    }
+
+
+    })
+});
+</script>
+</html>
